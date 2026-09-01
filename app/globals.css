@@ -1,0 +1,188 @@
+@import 'tailwindcss';
+
+/*
+ * Leo Club of Panadura-Alubomulla — "Twin Shore"
+ *
+ * One club, two towns. The whole system is built on that split: content sits
+ * in two columns that never quite line up, one always dropped below the other,
+ * so the page reads as a pair rather than a grid.
+ *
+ * Photography is duotoned in the club's two colours — indigo in the shadows,
+ * orange in the highlights — which unifies photographs taken in two places on
+ * two different days by two different people.
+ *
+ * Token names are ROLES, not hues.
+ */
+
+@theme {
+  /* --- Surfaces ------------------------------------------------------- */
+  --color-page: #f5f2ee;
+  --color-panel: #eae5df;
+  --color-inverse: #16172b;
+  --color-on-inverse: #f2f1f6;
+
+  /* --- Text ----------------------------------------------------------- */
+  --color-ink: #16172b;
+  --color-ink-muted: #4b4d66;
+  --color-ink-faint: #7d7f95;
+
+  /* --- Accents --------------------------------------------------------- */
+  /* Indigo is the club's primary and the duotone shadow. Orange is the
+     highlight and the interaction colour — never a background for body text. */
+  --color-accent: #2b3a8c;
+  --color-accent-strong: #1d2966;
+  --color-warm: #e9683a;
+
+  /* --- Lines ----------------------------------------------------------- */
+  --color-rule: #ded8d0;
+  --color-rule-strong: #bcb4a9;
+
+  /* --- Type ------------------------------------------------------------ */
+  --font-heading: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-karla), ui-sans-serif, system-ui, sans-serif;
+
+  --text-shore: 4rem;
+  --text-shore--line-height: 0.98;
+  --text-shore--letter-spacing: -0.035em;
+
+  --ease-tide: cubic-bezier(0.25, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    background-color: var(--color-page);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-warm);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-warm) 35%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .wrap {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .wrap {
+      padding-inline: 2rem;
+    }
+  }
+
+  .measure {
+    max-width: 36rem;
+  }
+
+  .band {
+    padding-block: 4.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .band {
+      padding-block: 6.5rem;
+    }
+  }
+
+  /*
+   * The offset. Applied to the second column of a pair so the two never align.
+   * Only above md — on a phone the columns stack and an offset would just look
+   * like a mistake.
+   */
+  @media (min-width: 768px) {
+    .drop {
+      margin-block-start: 5rem;
+    }
+
+    .drop-sm {
+      margin-block-start: 2.5rem;
+    }
+  }
+
+  /*
+   * Duotone. Two blend layers over a desaturated photograph: `lighten` with the
+   * dark colour raises the shadows to indigo, `darken` with the light colour
+   * pulls the highlights to orange. `isolation: isolate` keeps the blending
+   * inside this element rather than mixing with the page behind it.
+   *
+   * If a browser ignores mix-blend-mode the photograph still renders, just in
+   * greyscale — a graceful floor rather than a broken image.
+   */
+  .duotone {
+    position: relative;
+    isolation: isolate;
+    background-color: var(--color-accent);
+  }
+
+  .duotone img {
+    filter: grayscale(1) contrast(1.08);
+  }
+
+  .duotone::before,
+  .duotone::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .duotone::before {
+    background-color: var(--color-accent);
+    mix-blend-mode: lighten;
+  }
+
+  .duotone::after {
+    background-color: var(--color-warm);
+    mix-blend-mode: darken;
+  }
+
+  .reveal {
+    transition:
+      opacity 600ms var(--ease-tide),
+      transform 600ms var(--ease-tide);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .reveal.is-hidden {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+}
